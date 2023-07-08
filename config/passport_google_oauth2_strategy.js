@@ -9,7 +9,7 @@ passport.use(new GoogleStrategy({
   clientID: '965054862790-8n8cumcobjavfpem5qr514hu8surrpdg.apps.googleusercontent.com',
   // GOOGLE_CLIENT_SECRET
   clientSecret: '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',
-  callbackURL: "http://www.localhost:8000/auth/google/callback"
+  callbackURL: "http://www.127.0.0.1:8000/auth/google/callback"
 },
   function(accessToken, refreshToken, profile, cb) {
     // Finding User

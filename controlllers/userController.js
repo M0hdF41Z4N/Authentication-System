@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 module.exports.register = async (req, res) => {
-    const { name , email, password , confirm_password} = req.body;
-
+    const { firstName , lastName , email, password , confirm_password} = req.body;
+    let name = firstName+" "+lastName;
     if (password!=confirm_password) {
       return res.redirect('back');
     }
@@ -13,7 +13,7 @@ module.exports.register = async (req, res) => {
     if (user) {
       return res.redirect('/login');
     }else {
-      await User.create(req.body);
+      await User.create({name,email,password});
       return res.redirect('/login');
     }
     

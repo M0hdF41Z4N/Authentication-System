@@ -45,9 +45,9 @@ router.get('/dashboard', passport.checkAuthentication,(req, res) => {
   res.render('dashboard',{title:"Dashboard"},);
 });
 
-router.get('/users/auth/google',passport.authenticate('google',{scope: ['profile','email']}));
+router.get('/auth/google',passport.authenticate('google',{scope: ['profile','email']}));
 router.get(
-  '/users/auth/google/callback',
+  '/auth/google/callback',
   passport.authenticate(
     'google',
     {failureRedirect:'/login'})
