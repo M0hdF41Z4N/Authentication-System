@@ -1,5 +1,5 @@
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const crypto = require('crypto');
 const User = require('../models/user');
 
@@ -9,9 +9,10 @@ passport.use(new GoogleStrategy({
   clientID: '965054862790-8n8cumcobjavfpem5qr514hu8surrpdg.apps.googleusercontent.com',
   // GOOGLE_CLIENT_SECRET
   clientSecret: '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',
-  callbackURL: "http://www.127.0.0.1:8000/auth/google/callback"
+  callbackURL: "http://www.localhost:8000/auth/google/callback",
+  passReqToCallback   : true
 },
-  function(accessToken, refreshToken, profile, cb) {
+  function(req,accessToken, refreshToken, profile, done) {
     // Finding User
     User.findOrCreate({ email: profile.emails[0].value }).exec(function(err, user) {
       // Error occured in finding user

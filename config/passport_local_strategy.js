@@ -11,10 +11,27 @@ passport.use(new LocalStrategy({
   async function(req,email, password, done) {
     try {
       let user = await User.findOne({ email: email });
-      if (!user || user.password != password) {
-        return done(null, false);
+      if (!user) {
+        req.flash('error','Invalid username / password'); 
+        return done(null,false);
       }
-      return done(null, user); 
+      bcrypt.compare(password, user.password, function(err, result) {
+        if (result) {
+          req.flash('success',`${user.name}, You're Successfully Logged In`); 
+          // console.log("It matches!")
+          return done(null,user);
+        }
+        else {
+          // console.log("Invalid password!");
+          req.flash('error','Invalid username / password'); 
+          return done(null, false);
+        }
+      });
+
+      // if (!user || user.password != password) {
+      //   return done(null, false);
+      // }
+      // return done(null, user); 
     }catch(err) {
       return done(err);
     }

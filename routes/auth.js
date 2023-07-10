@@ -37,21 +37,24 @@ router.post('/register', userController.register);
 router.get('/logout', function(req, res, next){
   req.logout(function(err) {
     if (err) { return next(err); }
+    req.flash('success',"Succefully logged out");
     res.redirect('/');
   });
 });
 
 router.get('/dashboard', passport.checkAuthentication,(req, res) => {
-  res.render('dashboard',{title:"Dashboard"},);
+  res.render('dashboard',{title:"Dashboard"});
 });
 
-router.get('/auth/google',passport.authenticate('google',{scope: ['profile','email']}));
+router.get('/auth/google',passport.authenticate('google',{scope: ['email','profile']}));
 router.get(
   '/auth/google/callback',
   passport.authenticate(
     'google',
-    {failureRedirect:'/login'})
-    ,userController.login);
+    {
+      failureRedirect:'/login',
+      successRedirect: '/dashboard',
+    }));
 
 
 

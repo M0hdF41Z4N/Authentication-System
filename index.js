@@ -10,6 +10,10 @@ const authRoute = require('./routes/auth');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
 const expressLayouts = require('express-ejs-layouts');
+// Importing flash
+const flash = require('connect-flash');
+// Importing middleware for flash messages
+const cstmMsgMiddleware = require('./config/msgMiddleware');
 
 // Using Layouts
 app.use(expressLayouts);
@@ -58,6 +62,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(passport.setAuthenticatedUser);
+
+// Setting Up flash
+app.use(flash());
+// Setting Up custom ware of flash
+app.use(cstmMsgMiddleware.setFlash);
+
 
 // Set up routes
 app.use('/', indexRoute);
