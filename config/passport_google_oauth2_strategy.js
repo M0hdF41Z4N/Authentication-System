@@ -6,14 +6,16 @@ const User = require('../models/user');
 
 passport.use(new GoogleStrategy({
   // GOOGLE_CLIENT_ID
-  clientID: '965054862790-8n8cumcobjavfpem5qr514hu8surrpdg.apps.googleusercontent.com',
+  clientID: '965054862790-tj64di50jfooclbndcdbj6imjiv2m1mm.apps.googleusercontent.com',
   // GOOGLE_CLIENT_SECRET
-  clientSecret: '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',
-  callbackURL: "http://www.localhost:8000/auth/google/callback",
-  passReqToCallback   : true
+  clientSecret: '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',
+  callbackURL: "http://localhost:8000/auth/google/callback"
 },
-  function(req,accessToken, refreshToken, profile, done) {
+  function(accessToken, refreshToken, profile, done) {
     // Finding User
+    console.log(accessToken) ;
+    console.log(refreshToken) ;
+    console.log(profile);
     User.findOrCreate({ email: profile.emails[0].value }).exec(function(err, user) {
       // Error occured in finding user
       if (err) {
