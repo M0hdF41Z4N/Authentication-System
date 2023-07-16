@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const userController = require('../controlllers/userController');
 
@@ -42,9 +42,31 @@ router.get('/logout', function(req, res, next){
   });
 });
 
-router.get('/dashboard', passport.checkAuthentication,(req, res) => {
-  res.render('dashboard',{title:"Dashboard"});
+router.get('/dashboard', passport.checkAuthentication , userController.dashboard);
+
+
+router.get('/reset', passport.checkAuthentication , async (req,res) => {
+  let id = req.session.passport.user ;
+  let user = await User.findById(id);
+  return res.render('reset',{title:'Reset Password'});
 });
+
+router.post('/reset', passport.checkAuthentication,userController.reset);
+
+
+router.get('/forgotPassword',(req,res) => {
+  return res.render('forgotPassword',{title:"Forgot Password"});
+})
+router.post('/forgotPassword',userController.forgotPassword);
+
+router.post("/password-reset/:userId/:token", userController.resetPassword);
+router.get("/password-reset/:userId/:token",(req,res) => {
+  const userId = req.params.userId;
+  const token = req.params.token;
+  return res.render('passwordResetLink',{title:"Reset Password",userId:userId,token:token});
+});
+
+
 
 router.get('/auth/google',passport.authenticate('google',{scope: ['email','profile']}));
 router.get(

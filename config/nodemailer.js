@@ -1,19 +1,23 @@
+// Importing node mailer
 const nodemailer = require('nodemailer');
+// Importing ejs
 const ejs = require('ejs');
+// Importing path
 const path = require('path');
 
+// Creating transporter to send email
 let transporter = nodemailer.createTransport({
     service:'gmail',
     host: "smtp.gmail.com",
     port: 587,
-    secure: false,
+    secure: true,
     auth: {
-      user: 't3st3r1209@gmail.com',
-      pass: '12435t3st'
+      user: 'jbide025@gmail.com',
+      pass: 'uyehdqrjtnlnfdkd'
     }
   });
 
-
+// Email Template
 let renderTemplate = (data,relativePath) => {
     let mailHtml;
     ejs.renderFile(
@@ -26,6 +30,7 @@ let renderTemplate = (data,relativePath) => {
     )
     return mailHtml;
 }
+
 
 module.exports = {
     transporter : transporter,

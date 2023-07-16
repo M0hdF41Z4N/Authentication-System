@@ -70,7 +70,7 @@ app.use(cstmMsgMiddleware.setFlash);
 
 
 // Set up routes
-app.use('/home', indexRoute);
+app.use('/', indexRoute);
 app.use('/', authRoute);
 
 // Start the server

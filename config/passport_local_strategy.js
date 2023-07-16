@@ -1,54 +1,46 @@
+// Importing passport
 const passport = require('passport');
+// Importing local strategy
 const LocalStrategy = require('passport-local').Strategy;
+// Importing user model
 const User = require('../models/user');
+// Importing bcrypt
 const bcrypt = require('bcrypt');
 
+
+// Creating new strategy
 passport.use(new LocalStrategy({
   usernameField:'email',
-  // 
   passReqToCallback : true
 },
   async function(req,email, password, done) {
     try {
+      // Finding user
       let user = await User.findOne({ email: email });
+      // Case 1 : If user not found
       if (!user) {
+        // Send notification / message
         req.flash('error','Invalid username / password'); 
         return done(null,false);
       }
+      // else comparing/checking the password
       bcrypt.compare(password, user.password, function(err, result) {
         if (result) {
+          // sending notification
           req.flash('success',`${user.name}, You're Successfully Logged In`); 
-          // console.log("It matches!")
           return done(null,user);
         }
         else {
-          // console.log("Invalid password!");
+          // sending notification
           req.flash('error','Invalid username / password'); 
           return done(null, false);
         }
       });
-
-      // if (!user || user.password != password) {
-      //   return done(null, false);
-      // }
-      // return done(null, user); 
     }catch(err) {
+      // For debugging purpose
+      console.log("Error in passport local strategy",err);
       return done(err);
     }
-      // find a user and estaiblish the identity
-    // User.findOne({ email: email }, function (err, user) {
-    //   if (err) {
-    //     // req.flash('error',err);
-    //     return done(err); }
-    //   if (!user) {   
-    //     // req.flash('error','Invalid username / password'); 
-    //     return done(null, false); }
-    //   if (!user.verifyPassword(password)) {   
-    //     // req.flash('error','Invalid username / password'); 
-    //     return done(null, false); 
-    //   }
-    //   return done(null, user);
-    // });
   }
 ));
 
@@ -66,13 +58,6 @@ passport.deserializeUser(async (id,done)=>{
     console.log("Error in finding user --> Passport");
     return done(err);
   }
-  // User.findById(id) ,(err,user) => {
-  //     if (err) {
-  //         console.log("Error in finding user --> Passport");
-  //         return done(err);
-  //     }
-  //     return done(null,user);
-  // });
 });
 
 
