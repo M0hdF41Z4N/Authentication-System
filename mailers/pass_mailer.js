@@ -2,7 +2,7 @@ const nodeMailer = require('../config/nodemailer')
 
 
 exports.resetPass = (user,type,link) => {
-    console.log("Inside reset mailer",user);
+    // console.log("Inside reset mailer",user);
     nodeMailer.transporter.sendMail({
         from:'jbide025@gmail.com',
         to:user.email,
@@ -25,8 +25,9 @@ exports.resetPass = (user,type,link) => {
         `
         
     },(err,info) => {
+        // For debugging purpose
         if (err) { console.log("Error in Sending mail.",err); return; }
-        console.log('Message sent',info);
+        // console.log('Message sent',info);
         return;
     });
 }
