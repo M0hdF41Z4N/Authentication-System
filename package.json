@@ -8,7 +8,7 @@
   },
   "author": "Mohd Faizan",
   "license": "ISC",
-  "engine": {
+  "engines": {
     "node": ">=14.20.1"
   },
   "dependencies": {
