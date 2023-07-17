@@ -59,61 +59,74 @@ module.exports.register = async (req, res) => {
   }
 
 // Controller for dashboard view
-  module.exports.dashboard =  async (req, res) => {
-    try {
-      let id = req.session.passport.user ;
-      let user = await User.findById(id);
-      
-
-      if (user) {
-        res.render('dashboard',{title:"Dashboard",user:user});
-      }else {
-        res.render('dashboard',{title:"Dashboard"});
-      }
-    }catch(err) {
-      console.log("Error in dashboard view",err);
-      return;
-    }
-   
+module.exports.dashboard =  async (req, res) => {
+  try {
+    let id = req.session.passport.user ;
+    let user = await User.findById(id);
     
-  }
 
-  module.exports.reset = async (req,res) => {
-    try {
-      let id = req.session.passport.user ;
-      let user = await User.findById(id);
-      
-      const { password , confirm_password} = req.body;
-     
-      if (password!=confirm_password) {
-        req.flash('error',`Passwords don't match`);
-        return res.redirect('back');
-      }
-      if (!user) {
-        req.flash('error',`User not found`);
-        return res.redirect('/login');
-      }
-      if (user) {
-        bcrypt.hash(password, 10, async (err, hashedPassword) => { 
-          if (err) {
-            req.flash('error',"Internal Server Error");
-            throw err;
-          }
-          let user = await User.findByIdAndUpdate(id,{ $set : {password: hashedPassword}});
-          // sending mail on successfully registering
-          // console.log(user.email);
-          await user.save();
-          // passMailer.resetPass(user);
-          req.flash('success',  `${user.name} , password reset succesfully.`);
-          // return res.redirect('/login');
-      return res.redirect('/dashboard');
-        })
-      }
-    }catch(err) {
-      console.log("Error in reset view",err);
-      return;
+    if (user) {
+      res.render('dashboard',{title:"Dashboard",user:user});
+    }else {
+      res.render('dashboard',{title:"Dashboard"});
     }
+  }catch(err) {
+    console.log("Error in dashboard view",err);
+    return;
   }
+  
+  
+}
+
+module.exports.reset = async (req,res) => {
+  try {
+    // Getting user id from session
+    let id = req.session.passport.user ;
+    // Finding user
+    let user = await User.findById(id);
+    // Getting passwords
+    const { password , confirm_password} = req.body;
+    //  Case 1 : Matching password
+    if (password!=confirm_password) {
+      // Showing notification
+      req.flash('error',`Passwords don't match`);
+      // Redirecting back
+      return res.redirect('back');
+    }
+    // Case 2 : if user not exists
+    if (!user) {
+      // Showing notification
+      req.flash('error',`User not found`);
+      // Redirecting back
+      return res.redirect('back');
+    }
+    // Case 2 : If user found
+    if (user) {
+      // hasing the password
+      bcrypt.hash(password, 10, async (err, hashedPassword) => { 
+        // If there's an error
+        if (err) {
+          // Showing notification
+          req.flash('error',"Internal Server Error");
+          // throwing error
+          throw err;
+        }
+        // Updating user
+        let user = await User.findByIdAndUpdate(id,{ $set : {password: hashedPassword}});
+        // Saving user
+        await user.save();
+        // Showing notification
+        req.flash('success',  `${user.name} , password reset succesfull.`);
+        // Redirecting to dashboard
+    return res.redirect('/dashboard');
+      });
+    }
+  }catch(err) {
+    // For debugging purpose
+    console.log("Error in reset view",err);
+    return;
+  }
+}
 
 module.exports.forgotPassword = async (req,res) => {
   try {
@@ -159,6 +172,7 @@ module.exports.resetPassword = async (req,res) => {
     const user = await User.findById(req.params.userId);
     // Case 1 : if user not found
     if (!user) {
+      // Showing notification
       req.flash('error','invalid link or expired');
       return res.redirect('/');
     }
@@ -169,24 +183,31 @@ module.exports.resetPassword = async (req,res) => {
       });
     // Case 2 : if token not found
     if (!token) {
+      // Showing notification
       req.flash('error','invalid link or expired');
       return res.redirect('/');
     }
     // Case 3 : if password don't match
     if (password!=confirm_password) {
+      // Showing notification
       req.flash('error',`Passwords don't match`);
       return res.redirect('back');
     }
+    // Case 4 : if user is found
     if (user) {
+      // Hashing the password
       bcrypt.hash(password, 10, async (err, hashedPassword) => { 
         if (err) {
           req.flash('error',"Internal Server Error, Try again.");
           throw err;
         }
+        // Updating User
         let user = await User.findByIdAndUpdate(userId,{ $set : {password: hashedPassword}});
-        
+        // Saving User
         await user.save();
+        // Showing notification
         req.flash('success',  `${user.name} , password reset succesfull !Try login.`);
+        // Redirect to login
         return res.redirect('/login');
       });
     }

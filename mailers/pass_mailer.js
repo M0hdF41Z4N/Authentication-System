@@ -1,8 +1,12 @@
+// Importing Node Mailer
 const nodeMailer = require('../config/nodemailer')
 
 
 exports.resetPass = (user,type,link) => {
+
     // console.log("Inside reset mailer",user);
+
+    // Send Mail function
     nodeMailer.transporter.sendMail({
         from:'jbide025@gmail.com',
         to:user.email,

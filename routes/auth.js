@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-// const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const userController = require('../controlllers/userController');
 
+// Router for login
 router.get('/login', (req, res) => {
   if (req.isAuthenticated()) {
     return res.redirect('dashboard');
   }
   return res.render('login',{title:"Login"});
 });
+
 
 router.post(
   '/login',
@@ -21,6 +22,7 @@ router.post(
   })
 );
 
+// Route to register
 router.get('/register', (req, res) => {
   if (req.isAuthenticated()) {
     return res.redirect('dashboard');
@@ -30,10 +32,7 @@ router.get('/register', (req, res) => {
 
 router.post('/register', userController.register);
 
-// router.get('/logout', (req, res) => {
-//   req.logout();
-//   res.redirect('/');
-// });
+// Router fro logout
 router.get('/logout', function(req, res, next){
   req.logout(function(err) {
     if (err) { return next(err); }
@@ -42,9 +41,11 @@ router.get('/logout', function(req, res, next){
   });
 });
 
+
+// Route for dashboard
 router.get('/dashboard', passport.checkAuthentication , userController.dashboard);
 
-
+// Route to reset password for login
 router.get('/reset', passport.checkAuthentication , async (req,res) => {
   let id = req.session.passport.user ;
   let user = await User.findById(id);
@@ -53,7 +54,7 @@ router.get('/reset', passport.checkAuthentication , async (req,res) => {
 
 router.post('/reset', passport.checkAuthentication,userController.reset);
 
-
+// Route for forgot password
 router.get('/forgotPassword',(req,res) => {
   return res.render('forgotPassword',{title:"Forgot Password"});
 })
@@ -67,6 +68,7 @@ router.get("/password-reset/:userId/:token",(req,res) => {
 });
 
 
+// Route for Google Auth
 
 router.get('/auth/google',passport.authenticate('google',{scope: ['email','profile']}));
 router.get(
