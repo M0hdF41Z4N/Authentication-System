@@ -10,9 +10,9 @@ const User = require('../models/user');
 // Creating google strategy 
 passport.use(new GoogleStrategy({
   // GOOGLE_CLIENT_ID
-  clientID: '965054862790-tj64di50jfooclbndcdbj6imjiv2m1mm.apps.googleusercontent.com',
+  clientID: 'GOOGLE_CLIENT_ID',
   // GOOGLE_CLIENT_SECRET
-  clientSecret: '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',
+  clientSecret: 'GOOGLE_CLIENT_SECRET',
   callbackURL: "http://localhost:8000/auth/google/callback",
   passReqToCallback   : true
 },
